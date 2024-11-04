@@ -3,7 +3,7 @@
 from os import getenv
 from requests import get
 from datetime import datetime
-from PIL import Image, ImageDraw, ImageFont, ImageFilter
+from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageEnhance
 
 margin = 182
 padding = 10
@@ -18,7 +18,7 @@ margin_bottom = 100
 
 i = 0
 
-img = Image.open('backdrop.jpg').filter(ImageFilter.GaussianBlur(5))
+img = ImageEnhance.Brightness(Image.open('backdrop.jpg').filter(ImageFilter.GaussianBlur(5))).enhance(.95)
 
 blurred = img.filter(ImageFilter.GaussianBlur(52))
 
@@ -26,9 +26,11 @@ draw = ImageDraw.Draw(img)
 title_font = ImageFont.truetype('Comfortaa-VariableFont_wght.ttf', 96)
 font = ImageFont.truetype('Comfortaa-VariableFont_wght.ttf', 72)
 font2 = ImageFont.truetype('Comfortaa-VariableFont_wght.ttf', 64)
+font3 = ImageFont.truetype('Comfortaa-VariableFont_wght.ttf', 26)
 
 
 draw.text((width / 2, 175), 'STL 5-Day Weather Forecast' , (255, 255, 255), font = title_font, anchor = "mm", stroke="white", stroke_width=2)
+draw.text((0, height), ' https://github.com/MrMan314/STLToday-weather-generator', (255, 255, 255), font=font3, anchor="ld")
 
 response = get(f"http://dataservice.accuweather.com/forecasts/v1/daily/5day/49581?apikey={getenv('API_KEY')}&metric=true")
 
