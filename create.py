@@ -28,8 +28,14 @@ font = ImageFont.truetype('Comfortaa-VariableFont_wght.ttf', 72)
 font2 = ImageFont.truetype('Comfortaa-VariableFont_wght.ttf', 64)
 font3 = ImageFont.truetype('Comfortaa-VariableFont_wght.ttf', 26)
 
+shadow = Image.new('L', img.size, 0)
+shadow_black = Image.new('L', img.size, 0)
+shadow_draw = ImageDraw.Draw(shadow)
+shadow_draw.text((width / 2, 175), 'STL 5-Day Weather Forecast', "white", font = title_font, anchor = "mm", stroke_width=7)
+img.paste(shadow_black, mask=shadow.filter(ImageFilter.GaussianBlur(8)))
 
-draw.text((width / 2, 175), 'STL 5-Day Weather Forecast' , (255, 255, 255), font = title_font, anchor = "mm", stroke_width=2)
+draw.text((width / 2, 175), 'STL 5-Day Weather Forecast', (255, 255, 255), font = title_font, anchor = "mm", stroke_width=2)
+
 draw.text((0, height), ' https://github.com/MrMan314/STLToday-weather-generator', (255, 255, 255), font=font3, anchor="ld")
 
 response = get(f"http://dataservice.accuweather.com/forecasts/v1/daily/5day/49581?apikey={getenv('API_KEY')}&metric=true")
@@ -50,6 +56,7 @@ for day in response.json()['DailyForecasts']:
 	draw_mask.ellipse([x1 - 2 * corner_radius, y0, x1, y0 + 2 * corner_radius], fill="white")
 	draw_mask.ellipse([x1 - 2 * corner_radius, y1 - 2 * corner_radius, x1, y1], fill="white")
 
+	img.paste(shadow_black, mask=mask.filter(ImageFilter.GaussianBlur(8)))
 	img.paste(blurred, mask=mask)
 	draw.text(((width - margin * 2) / columns * (i + 0.5) + margin, 350), datetime.strptime(day['Date'], '%Y-%m-%dT%H:%M:%S%z').strftime('%a') , (255, 255, 255), font = font, anchor = "mm")
 	draw.text(((width - margin * 2) / columns * (i + 0.5) + margin, height - 300), f"H: {round(day['Temperature']['Maximum']['Value'])}°C", (255, 171, 171), font = font2, anchor = "mm")
